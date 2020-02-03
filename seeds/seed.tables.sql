@@ -3,20 +3,9 @@ TRUNCATE "word", "language", "user";
 INSERT INTO "user" ("id", "username", "name", "password")
   VALUES (1, 'admin', 'jonathan Admin',
     -- password = "password"
-<<<<<<< HEAD
     '$2a$10$fCWkaGbt7ZErxaxclioLteLUgg4Q3Rp09WW0s/wSLxDKYsaGYUpjG');
-VALUES (1,
-  'Spanish',
-  1);
-=======
-    '$2a$10$fCWkaGbt7ZErxaxclioLteLUgg4Q3Rp09WW0s/wSLxDKYsaGYUpjG'
-  );
-
 INSERT INTO "language" ("id", "name", "user_id")
-VALUES
-  (1, 'Spanish', 1);
-
->>>>>>> 756a1e0bd888cafa33c91c6ba6afe99e1ac0c1be
+  VALUES (1, 'Spanish', 1);
 INSERT INTO "word" ("id", "language_id", "original", "translation", "next")
   VALUES (1, 1, 'hola', 'hello', 2), (2, 1, 'práctica ', 'practice', 3), (3, 1, 'desarrolladora', 'developer', 4), (4, 1, 'traducir', 'translate', 5), (5, 1, 'increíble', 'amazing', 6), (6, 1, 'casa', 'house', 7), (7, 1, 'idioma', 'language', 8), (8, 1, 'charla', 'chat', 9), (9, 1, 'fuegos artificiales', 'fireworks', 10), (10, 1, 'bicicleta', 'bicycle', NULL);
 UPDATE
