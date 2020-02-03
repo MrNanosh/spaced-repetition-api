@@ -71,7 +71,7 @@ const UserService = {
 
       const languageWords = [
         ['hola', 'hello', 2],
-        ['práctica ', 'practice', 3],
+        ['práctica', 'practice', 3],
         [
           'desarrolladora',
           'developer',
@@ -87,7 +87,7 @@ const UserService = {
           'fireworks',
           10
         ],
-        ['bicicleta', 'bicycle', NULL]
+        ['bicicleta', 'bicycle', null]
       ];
 
       const [
