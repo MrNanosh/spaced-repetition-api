@@ -8,7 +8,7 @@ module.exports = {
     'postgresql://dunder-mifflin@localhost/spaced_repetition',
   JWT_SECRET:
     process.env.JWT_SECRET ||
-    'change-this-secret',
+    'supersmellystinkyfishfeetandcheese',
   JWT_EXPIRY:
     process.env.JWT_EXPIRY || '3h'
 };
