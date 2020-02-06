@@ -78,18 +78,16 @@ languageRouter.post(
     //validate
     if (!guess) {
       return res.status(400).json({
-        error: {
-          message: `Bad Request: doesn't have guess`
-        }
+        error:
+          "Missing 'guess' in request body"
       });
     }
     //get the translation  off of the head's value
-    let correctAnswer = await LanguageService.getCorrectAnswer(
+    let answer = await LanguageService.getCorrectAnswer(
       db,
       headId
     );
-    correctAnswer =
-      correctAnswer.translation;
+    answer = answer.translation;
     //update appropriate values in the database
 
     let {
@@ -103,28 +101,49 @@ languageRouter.post(
       db,
       headId
     );
-    let nextWord = headWord;
+    let nextWord = await LanguageService.getWordById(
+      db,
+      headWord.next
+    );
+    let nextHead = nextWord;
     const tail = await LanguageService.getTail(
       db,
       lang
     );
-    let correctCount;
-    let incorrectCount;
+    let wordCorrectCount;
+    let wordIncorrectCount;
+    let isCorrect = false;
 
     //compare the values
-    if (guess === correctAnswer) {
+    if (guess === answer) {
+      isCorrect = true;
       try {
         let {
           memory_value,
           correct_count,
           incorrect_count
         } = headWord;
+
+        const memVal = 2 * memory_value;
+        let counter = 1;
+
+        while (
+          nextWord.next &&
+          counter !== memVal
+        ) {
+          nextWord = await LanguageService.getWordById(
+            db,
+            nextWord.next
+          );
+          console.log(counter);
+          counter++;
+        }
+        console.log(counter);
         //update fields for correct answers
         let updateFields = {
-          memory_value:
-            2 * memory_value,
+          memory_value: memVal,
           correct_count: ++correct_count,
-          next: null //put to the end
+          next: nextWord.next //put to the end
         };
 
         await LanguageService.updateWord(
@@ -135,25 +154,15 @@ languageRouter.post(
 
         await LanguageService.updateWord(
           db,
-          tail.id,
+          nextWord.id,
           { next: headId }
         );
         total_score++;
-        correctCount = correct_count;
-        incorrectCount = incorrect_count;
+        wordCorrectCount = correct_count;
+        wordIncorrectCount = incorrect_count;
       } catch (error) {}
     } else {
       //if they get the answer wrong
-      nextWord = await LanguageService.getWordById(
-        db,
-        nextWord.next
-      );
-      let {
-        incorrect_count,
-        correct_count,
-        memory_value,
-        id
-      } = nextWord;
 
       //change the next word next to head
       let updateFields = {
@@ -161,14 +170,14 @@ languageRouter.post(
       };
       await LanguageService.updateWord(
         db,
-        id,
+        nextWord.id,
         updateFields
       );
 
       //update the next of the old head
       let updateFieldsOfOldHead = {
         memory_value: 1,
-        incorrect_count: ++incorrect_count,
+        incorrect_count: ++headWord.incorrect_count,
         next: nextWord.next //change head to point to next of the old next word
       };
       await LanguageService.updateWord(
@@ -176,8 +185,10 @@ languageRouter.post(
         headId,
         updateFieldsOfOldHead
       );
-      correctCount = correct_count;
-      incorrectCount = incorrect_count;
+      wordCorrectCount =
+        headWord.correct_count;
+      wordIncorrectCount =
+        headWord.incorrect_count;
     }
 
     //update the total score and the head
@@ -192,10 +203,14 @@ languageRouter.post(
 
     //respond with the correct count and incorrect count and total score, and maybe correct answer
     res.json({
-      correctCount,
-      incorrectCount,
+      wordCorrectCount:
+        nextHead.correct_count,
+      wordIncorrectCount:
+        nextHead.incorrect_count,
+      nextWord: nextHead.original,
+      isCorrect,
       totalScore: total_score,
-      correctAnswer
+      answer
     });
   }
 );
