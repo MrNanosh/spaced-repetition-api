@@ -70,7 +70,7 @@ const LanguageService = {
       .first();
   },
   updateWord(db, id, wordToUpdate) {
-    return db('words')
+    return db('word')
       .where({ id })
       .update(wordToUpdate);
   },

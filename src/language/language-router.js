@@ -3,6 +3,7 @@ const LanguageService = require('./language-service');
 const {
   requireAuth
 } = require('../middleware/jwt-auth');
+const jsonParser = express.json();
 
 const languageRouter = express.Router();
 
@@ -67,12 +68,12 @@ languageRouter.get(
 
 languageRouter.post(
   '/guess',
+  jsonParser,
   async (req, res, next) => {
     const headId = req.language.head;
     const lang = req.language.id;
     const db = req.app.get('db');
     //take the guess off of the res.body
-    console.log(req);
     const { guess } = req.body;
     //validate
     if (!guess) {
@@ -83,36 +84,41 @@ languageRouter.post(
       });
     }
     //get the translation  off of the head's value
-    const correctAnswer = await LanguageService.getCorrectAnswer(
+    let correctAnswer = await LanguageService.getCorrectAnswer(
       db,
       headId
     );
+    correctAnswer =
+      correctAnswer.translation;
     //update appropriate values in the database
 
-    const {
+    let {
       total_score
     } = await LanguageService.getUsersLanguage(
       db,
       req.user.id
     );
 
-    const nextWord = await LanguageService.getWordById(
+    const headWord = await LanguageService.getWordById(
       db,
       headId
     );
+    let nextWord = headWord;
+    const tail = await LanguageService.getTail(
+      db,
+      lang
+    );
+    let correctCount;
+    let incorrectCount;
+
     //compare the values
     if (guess === correctAnswer) {
       try {
-        const tail = await LanguageService.getTail(
-          db,
-          lang
-        );
-        const {
+        let {
           memory_value,
           correct_count,
           incorrect_count
-        } = tail;
-
+        } = headWord;
         //update fields for correct answers
         let updateFields = {
           memory_value:
@@ -123,21 +129,32 @@ languageRouter.post(
 
         await LanguageService.updateWord(
           db,
-          tail.id,
+          headId,
           updateFields
         );
+
+        await LanguageService.updateWord(
+          db,
+          tail.id,
+          { next: headId }
+        );
         total_score++;
+        correctCount = correct_count;
+        incorrectCount = incorrect_count;
       } catch (error) {}
     } else {
       //if they get the answer wrong
-
-      const {
+      nextWord = await LanguageService.getWordById(
+        db,
+        nextWord.next
+      );
+      let {
         incorrect_count,
         correct_count,
         memory_value,
-        id,
-        next
+        id
       } = nextWord;
+
       //change the next word next to head
       let updateFields = {
         next: headId //old head goes after
@@ -151,14 +168,16 @@ languageRouter.post(
       //update the next of the old head
       let updateFieldsOfOldHead = {
         memory_value: 1,
-        incorrect_count: ++correct_count,
-        next: next //change head to point to next of the old next word
+        incorrect_count: ++incorrect_count,
+        next: nextWord.next //change head to point to next of the old next word
       };
       await LanguageService.updateWord(
         db,
         headId,
         updateFieldsOfOldHead
       );
+      correctCount = correct_count;
+      incorrectCount = incorrect_count;
     }
 
     //update the total score and the head
@@ -167,14 +186,14 @@ languageRouter.post(
       lang,
       {
         total_score,
-        head: nextWord.id
+        head: headWord.next
       }
     );
 
     //respond with the correct count and incorrect count and total score, and maybe correct answer
     res.json({
-      correctCount: correct_count,
-      incorrectCount: incorrect_count,
+      correctCount,
+      incorrectCount,
       totalScore: total_score,
       correctAnswer
     });
