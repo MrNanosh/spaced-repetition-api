@@ -47,7 +47,41 @@ const LanguageService = {
         'w.incorrect_count as wordIncorrectCount', //wordIncorrectCount
         'l.total_score as totalScore' //totalScore needed from language
       )
-      .where({ 'w.id': head_id });
+      .where({ 'w.id': head_id })
+      .first();
+  },
+  getCorrectAnswer(db, head_id) {
+    return db('word')
+      .where({ id: head_id })
+      .select('translation')
+      .first();
+  },
+  getTail(db, language_id) {
+    return db('word')
+      .where({
+        language_id,
+        next: null
+      })
+      .first();
+  },
+  getWordById(db, id) {
+    return db('word')
+      .where({ id })
+      .first();
+  },
+  updateWord(db, id, wordToUpdate) {
+    return db('words')
+      .where({ id })
+      .update(wordToUpdate);
+  },
+  updateLanguage(
+    db,
+    id,
+    fieldsToUpdate
+  ) {
+    return db('language')
+      .where({ id })
+      .update(fieldsToUpdate);
   }
 };
 
