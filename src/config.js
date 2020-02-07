@@ -10,10 +10,5 @@ module.exports = {
     process.env.JWT_SECRET ||
     'supersmellystinkyfishfeetandcheese',
   JWT_EXPIRY:
-<<<<<<< HEAD
     process.env.JWT_EXPIRY || '3h'
-=======
-    process.env.JWT_EXPIRY || '3h',
- 
->>>>>>> 8e37aab5e108ff55cef20713c1f8226d0bb348e0
 };
