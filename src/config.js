@@ -11,12 +11,5 @@ module.exports = {
     process.env.JWT_SECRET ||
     'supersmellystinkyfishfeetandcheese',
   JWT_EXPIRY:
-    process.env.JWT_EXPIRY || '3h',
-  migrationsDirectory: 'migrations',
-  driver: 'pg',
-  connectionString:
-    process.env.NODE_ENV === 'test'
-      ? process.env.TEST_DATABASE_URL
-      : process.env.DATABASE_URL,
-  ssl: !!process.env.SSL
+    process.env.JWT_EXPIRY || '3h'
 };
