@@ -1,52 +1,125 @@
-# Spaced repetition API!
+# <ins>SpaceR 
+## A Spaced Repetition Application for Language Learners
 
-## Local dev setup
+Developed by Dana Zinatbakhsh and Jonathan Jackson
 
-If using user `dunder-mifflin`:
+## Summary 
+<i>SpaceR</i> is an application designed to help users memorize words in a foreign language. <i>SpaceR</i> uses the evidence-based learning technique of <i>spaced repetition</i> to provide an interactive learning experience for the user. A foreign word is displayed on the screen, prompting the user to type in the English translation of the word. The user then receives feedback on their answer - whether it was correct or incorrect. The foreign word is then shuffled back into the "stack" of vocabulary words. Words that the user translated incorrectly are shown more frequently than words that were correctly translated in order to reinforce learning of the vocabulary.
+
+## Technologies Used
+* Client: React
+* Web Server: Node and Express with PostgreSQL 
+* Database: PostgreSQL hosted on Heroku
+* Tests: Supertest, Mocha, Chai, Cypress
+
+### A live link to the project is available here: https://space-r.now.sh/
+
+### GitHub Repo for Client: https://github.com/MrNanosh/spaced-repetition
+### GitHub Repo for Server: https://github.com/MrNanosh/spaced-repetition-api
+
+### Screenshots:
+![alt text](./SpaceR_screenshots/homepage_view1.png "SpaceR_homepage")
+
+![alt text](./SpaceR_screenshots/full_on_view1.png "SpaceR_main")
+
+![alt text](./SpaceR_screenshots/translate_view1.png "SpaceR_translate")
+
+![alt text](./SpaceR_screenshots/login_view1.png "SpaceR_login")
+
+![alt text](./SpaceR_screenshots/mobile_view_01.png "SpaceR_mobile1")
+
+![alt text](./SpaceR_screenshots/mobile_view_11.png "SpaceR_mobile2")
+
+
+
+## API Endpoints
+The following API endpoints are available. The GET request to the /api/language endpoint returns database values for spaced repetition learning components.
+
+`POST to
+/api/auth`:
+```json
+{
+"username": "----",
+"password": "----"
+}
+
+GET to
+'/api/language':
+
+{
+  "language":{
+    "id":1,
+    "name":"Spanish",
+    "user_id":1,
+    "head":1,
+    "total_score":0
+    },
+    "words":[
+      {
+        "id":1,
+        "language_id":1,
+        "original":"hola",
+        "translation":"hello",
+        "next":2,
+        "memory_value":1,
+        "correct_count":0,
+        "incorrect_count":0
+        }
+        ...
+```
+POST to
+'/api/user':
+```json
+{
+"username": "admin",
+"name": "sample",
+"password": "P@ssword8CharactersAtLeast"
+}
+
+
+
+## Setup
+
+To setup the application
+
+1. Fork and clone the project to your machine
+2. `npm install`. This will also install the application *Cypress.io* for running browser integration tests
+
+The project expects you have the Spaced repetition API project setup and running on http://localhost:8000.
+
+Find instructions to setup the API here https://github.com/Thinkful-Ed/spaced-repetition-api.
+
+## Running project
+
+This is a `create-react-app` project so `npm start` will start the project in development mode with hot reloading by default.
+
+## Running the tests
+
+This project uses [Cypress IO](https://docs.cypress.io) for integration testing using the Chrome browser.
+
+Cypress has the following expectations:
+
+- You have cypress installed (this is a devDependency of the project)
+- You have your application running at http://localhost:3000.
+  - You can change the address of this expectation in the `./cypress.json` file.
+- Your `./src/config.js` is using http://localhost:8000/api as the `API_ENDPOINT`
+
+To start the tests run the command:
 
 ```bash
-mv example.env .env
-createdb -U dunder-mifflin spaced-repetition
-createdb -U dunder-mifflin spaced-repetition-test
+npm run cypress:open
 ```
 
-If your `dunder-mifflin` user has a password be sure to set it in `.env` for all appropriate fields. Or if using a different user, update appropriately.
+On the first run of this command, the cypress application will verify its install. Any other runs after this, the verification will be skipped.
+
+The command will open up the Cypress application which reads tests from the `./cypress/integration/` directory. You can then run individual tests by clicking on the file names or run all tests by clicking the "run all tests" button in the cypress GUI.
+
+Tests will assert against your running localhost client application.
+
+You can also start all of the tests in the command line only (not using the GUI) by running the command:
 
 ```bash
-npm install
-npm run migrate
-env MIGRATION_DB_NAME=spaced-repetition-test npm run migrate
+npm run cypress:run
 ```
 
-And `npm test` should work at this point
-
-## Configuring Postgres
-
-For tests involving time to run properly, configure your Postgres database to run in the UTC timezone.
-
-1. Locate the `postgresql.conf` file for your Postgres installation.
-   1. E.g. for an OS X, Homebrew install: `/usr/local/var/postgres/postgresql.conf`
-   2. E.g. on Windows, _maybe_: `C:\Program Files\PostgreSQL\11.2\data\postgresql.conf`
-   3. E.g  on Ubuntu 18.04 probably: '/etc/postgresql/10/main/postgresql.conf'
-2. Find the `timezone` line and set it to `UTC`:
-
-```conf
-# - Locale and Formatting -
-
-datestyle = 'iso, mdy'
-#intervalstyle = 'postgres'
-timezone = 'UTC'
-#timezone_abbreviations = 'Default'     # Select the set of available time zone
-```
-
-## Scripts
-
-Start the application `npm start`
-
-Start nodemon for the application `npm run dev`
-
-Run the tests mode `npm test`
-
-Run the migrations up `npm run migrate`
-
-Run the migrations down `npm run migrate -- 0`
+This will save video recordings of the test runs in the directory `./cypress/videos/`.
