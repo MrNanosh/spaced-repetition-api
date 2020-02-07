@@ -14,6 +14,10 @@ app.use(morgan((NODE_ENV === 'production') ? 'tiny' : 'common', {
   skip: () => NODE_ENV === 'test',
 }))
 app.use(cors())
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8e37aab5e108ff55cef20713c1f8226d0bb348e0
 app.use(helmet())
 
 app.use('/api/auth', authRouter)
