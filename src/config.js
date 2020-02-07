@@ -1,10 +1,11 @@
 module.exports = {
+  CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
   PORT: process.env.PORT || 8000,
   NODE_ENV:
     process.env.NODE_ENV ||
     'development',
-  DB_URL:
-    process.env.DB_URL ||
+  DATABASE_URL:
+    process.env.DATABASE_URL ||
     'postgresql://dunder-mifflin@localhost/spaced_repetition',
   JWT_SECRET:
     process.env.JWT_SECRET ||
