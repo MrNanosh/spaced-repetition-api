@@ -23,7 +23,7 @@ Developed by Dana Zinatbakhsh and Jonathan Jackson
 
 ### Screenshots:
 
-![alt text](./public/SpaceR_screenshots/homepage_view.png 'SpaceR_homepage')
+![alt text](./SpaceR_screenshots/homepage_view.png 'SpaceR_homepage')
 
 ![alt text](./public/SpaceR_screenshots/full_on_view.png 'SpaceR_main')
 
